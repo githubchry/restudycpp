@@ -44,6 +44,7 @@ bool Collector::Stop()
 
     return true;
 }
+
 int Collector::ReleaseData(ProtocolDataVar *pData)
 {
     delete pData;
