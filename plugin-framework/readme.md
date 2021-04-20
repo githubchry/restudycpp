@@ -73,5 +73,97 @@
 
 
 
+# 错误排查
+
+**现象**
+
+```
+dlsym返回null，打印dlerror()：/mnt/d/xxxx/protocols/libsysinfo.so: undefined symbol: _ZTI7IPlugin
+```
+
+**分析**
+
+用`nm -D`查看so是否存在符号
+
+```
+nm -D libsysinfo.so | grep _ZTI7IPlugin
+输出如下：
+                 U _ZTI7IPlugin
+
+
+```
+
+用`ldd -r`查看so链接信息
+
+```
+ldd -r libsysinfo.so
+输出如下
+        linux-vdso.so.1 (0x00007ffd9cdc6000)
+        libasan.so.5 => /lib/x86_64-linux-gnu/libasan.so.5 (0x00007f4a82169000)
+        libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4a81f88000)
+        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4a81f6d000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4a81d7b000)
+        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f4a81d75000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007f4a81d6a000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f4a81d45000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4a81bf6000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f4a82bb2000)
+undefined symbol: _ZTI7IPlugin  (./libsysinfo.so)
+undefined symbol: _ZN7IPlugin16SetHardwareParamEPv      (./libsysinfo.so)
+undefined symbol: _ZN7IPlugin14SetSystemParamEPv        (./libsysinfo.so)
+```
+
+**原因**
+
+sysinfo里面以IPlugin为基类实现了一个插件，出现`_ZTI7IPlugin`应该是因为这个基类存在虚函数没完全实现。
+
+**解决过程**
+
+然后在代码里面override了SetHardwareParam和SetSystemParam两个函数，并使用代码编辑器生成了默认的实现：
+
+```
+bool SysInfoPluginImpl::SetHardwareParam(void *pHardwareConfig) {
+    return IPlugin::SetHardwareParam(pHardwareConfig);
+}
+
+bool SysInfoPluginImpl::SetSystemParam(void *pSystemConfig) {
+    return IPlugin::SetSystemParam(pSystemConfig);
+}
+```
+
+用`ldd -r`查看so链接信息
+
+```
+ldd -r libsysinfo.so
+输出如下
+        linux-vdso.so.1 (0x00007ffc8712e000)
+        libasan.so.5 => /lib/x86_64-linux-gnu/libasan.so.5 (0x00007fb4b96ac000)
+        libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007fb4b94cb000)
+        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fb4b94b0000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb4b92be000)
+        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fb4b92b8000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007fb4b92ad000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fb4b9288000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fb4b9139000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007fb4ba0f5000)
+undefined symbol: _ZN7IPlugin16SetHardwareParamEPv      (./libsysinfo.so)
+undefined symbol: _ZN7IPlugin14SetSystemParamEPv        (./libsysinfo.so)
+```
+
+`_ZTI7IPlugin`错误没了， 但依旧存在`SetHardwareParam`和`SetSystemParam`找不到，原因很明显，这两的确是没有实现，上面不应该用编辑器默认的写法，应该改成：
+
+```
+bool SysInfoPluginImpl::SetHardwareParam(void *pHardwareConfig) {
+    return false;
+}
+
+bool SysInfoPluginImpl::SetSystemParam(void *pSystemConfig) {
+    return false;
+}
+
+```
+
+至此， 问题解决。
+
 
 
