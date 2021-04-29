@@ -42,7 +42,7 @@ int main() {
     pData->name = std::string("");
     std::cout << "2222" << std::endl;
 
-    // pData->name.~string();   // std::string没有析构函数
+    pData->name.~basic_string();   // std::string的析构函数不是~string()
 
     free(ptr);
 
