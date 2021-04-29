@@ -15,7 +15,7 @@ class Shape {
   }
   ~Shape() {
     std::cout << "delete Shape buf" << std::endl;
-    delete shapeBuf;
+    delete[] shapeBuf;
   }
   // 虚函数：该方法子类可以重写
   virtual void draw() { std::cout << "draw shape" << std::endl; }
@@ -34,7 +34,7 @@ class Circle : public Shape {
   }
   ~Circle() {
     std::cout << "delete Circle buf" << std::endl;
-    delete circleBuf;
+    delete[] circleBuf;
   }
   void draw() { std::cout << "draw circle" << std::endl; }
   void name() { std::cout << "name circle" << std::endl; }
@@ -50,7 +50,7 @@ class Triangle : public Shape {
   }
   ~Triangle() {
     std::cout << "delete Triangle buf" << std::endl;
-    delete triangleBuf;
+    delete[] triangleBuf;
   }
   void draw() { std::cout << "draw triangle" << std::endl; }
   void name() { std::cout << "name triangle" << std::endl; }

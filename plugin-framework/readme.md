@@ -167,3 +167,30 @@ bool SysInfoPluginImpl::SetSystemParam(void *pSystemConfig) {
 
 
 
+**现象二**
+
+```
+ldd -r libsysinfo.so
+输出如下
+        linux-vdso.so.1 (0x00007ffd9cdc6000)
+        libasan.so.5 => /lib/x86_64-linux-gnu/libasan.so.5 (0x00007f4a82169000)
+        libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4a81f88000)
+        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4a81f6d000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4a81d7b000)
+        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f4a81d75000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007f4a81d6a000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f4a81d45000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4a81bf6000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f4a82bb2000)
+undefined symbol: _ZTI7IPlugin  (./libsysinfo.so)
+undefined symbol: _ZTI7IPlugin  (./libsysinfo.so)
+```
+
+### ** 解决**
+
+```
+修改虚类IPlugin，检查虚类的方法，定义成纯虚函数或者增加默认实现
+```
+
+
+

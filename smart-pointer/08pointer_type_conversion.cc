@@ -171,7 +171,7 @@ class Shape {
   }
   virtual ~Shape() {
     std::cout << "delete Shape buf" << std::endl;
-    delete shapeBuf;
+    delete[] shapeBuf;
   }
 };
 
@@ -184,7 +184,7 @@ class Circle : public Shape {
   }
   ~Circle() {
     std::cout << "delete Circle buf" << std::endl;
-    delete circleBuf;
+    delete[] circleBuf;
   }
 };
 
@@ -197,7 +197,7 @@ class Triangle : public Shape {
   }
   ~Triangle() {
     std::cout << "delete Triangle buf" << std::endl;
-    delete triangleBuf;
+    delete[] triangleBuf;
   }
 };
 

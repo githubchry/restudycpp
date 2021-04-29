@@ -35,7 +35,7 @@ class Shape {
   }
   ~Shape() {
     std::cout << "delete Shape buf" << std::endl;
-    delete shapeBuf;
+    delete[] shapeBuf;
   }
 };
 
