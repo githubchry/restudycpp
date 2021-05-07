@@ -34,5 +34,4 @@
 .vscode
 .idea
 build
-main
 cmake-build*
