@@ -2,11 +2,11 @@ SOURCE=PluginTestObject.cpp
 
 make:${SOURCE}
 	g++ -fPIC -shared $^ -o libto.so
-	g++ -o main main.cpp -ldl
+	g++ -o plugin-demo main.cpp -ldl
 
 
 clean:
-	rm -rf main *.o *.so
+	rm -rf plugin-demo *.o *.so
 
 
-all:main
+all:plugin-demo
