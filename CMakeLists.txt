@@ -46,4 +46,4 @@ add_subdirectory(smart-pointer)
 add_subdirectory(regex)
 
 add_subdirectory(lazy-evaluation)
-add_subdirectory(future)
+add_subdirectory(thread-future)
