@@ -40,4 +40,8 @@ int main() {
      * 这种复杂性并非逻辑上的复杂性，而只是实现导致的，不是我们希望的写代码的方式
      *      ——引入看更高层的抽象，未来量 future
      * */
+
+    // condition_variable除了wait方法，还有可设置等待超时时间的wait_for/wait_until
+    // wait_for/wait_until过程中修改系统时间但会出现bug，一定要注意！
+    // —— 示例 03condition_variable_wait_for_time_bug.cc
 }
