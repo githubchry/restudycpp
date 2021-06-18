@@ -35,7 +35,7 @@ int main() {
      * 在C++11中信号量的wait_for通过wait_util实现，前者直接使用system_clock，后者虽然可以在传入time point指定clock类型
      * 但是在实现时都会转换为系统时间，然后等待，这会导致等待过程中，如果系统时间发生变化，等待行为不正确。
      *
-     * 例如如果系统事件向前（过去）变化，可能永远无法超时，如果向后（未来）变化，则可能立即超时。
+     * 例如如果系统时间向前（过去）变化，可能永远无法超时，如果向后（未来）变化，则可能立即超时。
      *
      * 这个问题会在设备上导致，设置设备时间时，所有信号量等待出现问题，其中最严重的是看门狗的信号量无法超时，导致无法喂狗，最终设备重启。
      *
@@ -43,10 +43,10 @@ int main() {
      * 以下代码行为都不正确:
      */
 
-    cv.wait_for(lock, 30s); // 最长等待30秒
-    cv.wait_until(lck, std::chronos::system_clock::now() + 30s);
+    cv.wait_for(lock, 10s); // 最长等待10秒
+    cv.wait_until(lock, chrono::system_clock::now() + 10s);
     // 即使这样也不行，因为内部会转换为system clock在等待，这在c++11参考note里面说的很明确
-    cv.wait_until(lck, std::chronos::steady_clock::now() + 30s);
+    cv.wait_until(lock, chrono::steady_clock::now() + 10s);
 
     cout << "Answer: " << result << '\n';
 
