@@ -49,3 +49,5 @@ add_subdirectory(lazy-evaluation)
 add_subdirectory(thread-future)
 add_subdirectory(numeric)
 add_subdirectory(container)
+add_subdirectory(variable-args)
+

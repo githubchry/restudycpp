@@ -2,8 +2,10 @@
 #pragma once
 
 #include <string>
-#include <queue>
+#include "LoggerImpl.h"
+#include "Queue.h"
 
+// 推荐protobuf 取代ProtocolDataVar结构体，使用oneof作为数据段
 struct ProtocolDataVar {
     std::string name;   //名字
     std::string unit;   //单位
@@ -45,7 +47,7 @@ public:
     /**
      * 控制数据的生成和销毁，中间由加工类插件处理
     */
-    virtual void SetDataQueue(std::queue<ProtocolDataVar *> *pQueue) {};
+    virtual void SetDataQueue(Queue<ProtocolDataVar *> *pQueue) {};
 
     virtual int ReleaseData(ProtocolDataVar *pData) { return 0; };
 

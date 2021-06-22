@@ -28,9 +28,11 @@ bool GpsCollector::Start() {
                     .data = "120°25'36\""
             };
 
-            std::cout << "生成经度" << pDataX << std::endl;
-            pQueue_->push(pDataX);
-
+            log_debug("生成经度:%p\n", pDataX);
+            if (false == pQueue_->push(pDataX)){
+                log_error("添加经度到队列失败:%p\n", pDataX);
+                ReleaseData(pDataX);
+            }
 
             auto *pDataY = new ProtocolDataVar{
                     .name = std::string("北纬"),
@@ -41,8 +43,11 @@ bool GpsCollector::Start() {
                     .data = "23°9'36\""
             };
 
-            std::cout << "生成纬度" << pDataY << std::endl;
-            pQueue_->push(pDataY);
+            log_debug("生成纬度:%p\n", pDataY);
+            if (false == pQueue_->push(pDataY)){
+                log_error("添加纬度到队列失败:%p\n", pDataY);
+                ReleaseData(pDataY);
+            }
         }
 
         // 线程已经退出
@@ -74,11 +79,11 @@ bool GpsCollector::UInit() {
 
 
 int GpsCollector::ReleaseData(ProtocolDataVar *pData) {
-    std::cout << "释放经纬" << pData << std::endl;
+    log_debug("释放经纬:%p\n", pData);
     delete pData;
     return 0;
 }
 
-void GpsCollector::SetDataQueue(std::queue<ProtocolDataVar *> *pQueue) {
+void GpsCollector::SetDataQueue(Queue<ProtocolDataVar *> *pQueue) {
     pQueue_ = pQueue;
 }

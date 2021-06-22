@@ -1,12 +1,12 @@
 #pragma once
 
-#include "PluginMod.h"
+#include "PluginModule.h"
 #include "singleton.h"
 
-class Processor : public PluginMod {
+class Processor : public PluginModule {
 SINGLETON_STACK_CTOR(Processor);
 public:
     bool Init() {
-        return PluginMod::Init("Processor", "Instance");
+        return PluginModule::Init("Processor", "Instance");
     }
 };

@@ -5,19 +5,18 @@
 #include "PluginImpl.h"
 #include "PluginLoader.h"
 #include <string>
-#include <queue>
 
-class PluginMod {
+class PluginModule {
 private:
 
     PluginLoader<GetPluginInterface, PluginImpl *> m_libs;
     std::vector<PluginImpl *> m_vClasses;//端口采集对象集合
 
-    std::queue<ProtocolDataVar *> *pQueue_ = nullptr;//采集数据缓冲区
+    Queue<ProtocolDataVar *> *pQueue_ = nullptr;//采集数据缓冲区
 public:
-    PluginMod(/* args */) = default;
+    PluginModule(/* args */) = default;
 
-    virtual ~PluginMod() = default;
+    virtual ~PluginModule() = default;
 
     /**
      * 初始化模块
@@ -31,8 +30,7 @@ public:
 
 
     // 设置基本信息到模块下的各插件
-    void SetDataQueue(std::queue<ProtocolDataVar *> *pQueue);   //队列
-    // void SetLogger(ILogger * pLogger);       // 日志
+    void SetDataQueue(Queue<ProtocolDataVar *> *pQueue);   //队列
     // void SetMemPool(IMemoryPool *pMemPool);  // 内存池
 
 

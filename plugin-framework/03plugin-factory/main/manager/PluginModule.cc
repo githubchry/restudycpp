@@ -1,20 +1,17 @@
-#include "PluginMod.h"
+#include "PluginModule.h"
 
-bool PluginMod::Init(const char *pModuleName, const char *pInterfaceName) {
+bool PluginModule::Init(const char *pModuleName, const char *pInterfaceName) {
 
-    m_libs.PluginModLoad(pModuleName, pInterfaceName, m_vClasses);
-
+    m_libs.PluginModuleLoad(pModuleName, pInterfaceName, m_vClasses);
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
-        std::cout << iter << std::endl;
         iter->SetDataQueue(pQueue_);
     }
 
     return false;
 }
 
-bool PluginMod::Start() {
-
+bool PluginModule::Start() {
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
         iter->Start();
@@ -23,11 +20,11 @@ bool PluginMod::Start() {
     return false;
 }
 
-void PluginMod::SetDataQueue(std::queue<ProtocolDataVar *> *pQueue) {
+void PluginModule::SetDataQueue(Queue<ProtocolDataVar *> *pQueue) {
     pQueue_ = pQueue;
 }
 
-int PluginMod::ProcessData(ProtocolDataVar *pData) {
+int PluginModule::ProcessData(ProtocolDataVar *pData) {
 
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
@@ -37,22 +34,17 @@ int PluginMod::ProcessData(ProtocolDataVar *pData) {
     return 0;
 }
 
-bool PluginMod::UInit() {
+bool PluginModule::UInit() {
 
     // 初始化插件依赖信息
-
-    std::cout << "m_vClasses.size()" << m_vClasses.size() << std::endl;
-
     for (auto iter : m_vClasses) {
-        std::cout << iter << std::endl;
         delete iter;
     }
 
     return false;
 }
 
-bool PluginMod::Stop() {
-
+bool PluginModule::Stop() {
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
         iter->Stop();
@@ -61,7 +53,7 @@ bool PluginMod::Stop() {
     return false;
 }
 
-int PluginMod::ReleaseData(ProtocolDataVar *pData) {
+int PluginModule::ReleaseData(ProtocolDataVar *pData) {
 
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
@@ -74,3 +66,4 @@ int PluginMod::ReleaseData(ProtocolDataVar *pData) {
 
     return 0;
 }
+

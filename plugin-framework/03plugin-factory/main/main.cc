@@ -1,28 +1,38 @@
 
 #include <unistd.h>     //sleep
-#include <thread>
 #include <DataWorker.h>
+
 #include "Collector.h"
 #include "Processor.h"
 
 int main() {
 
-    auto *queue = new std::queue<ProtocolDataVar *>;
+#ifdef ENABLE_LOG
+    scoped_zlog zlog_init("zlog.conf", "my_cat");
+#endif
 
-    Collector::Instance().SetDataQueue(queue);
+    log_debug("debug\n");
+    log_info("info\n");
+    log_notice("notice\n");
+    log_warn("warn\n");
+    log_error("error\n");
+    log_fatal("fatal\n");
 
-    Collector::Instance().Init();
+    Queue<ProtocolDataVar *> queue(100);
+
+    Collector::Instance().SetDataQueue(&queue);
+    Collector::Instance().Init();   // 对该类别下各插件逐个设置 logger queue
+
     Processor::Instance().Init();
 
-    DataWorker worker(queue);
+    DataWorker worker(&queue);
     worker.Start();
 
-    Collector::Instance().Start();
     Processor::Instance().Start();
+    Collector::Instance().Start();
 
     //测试5秒后退出
     sleep(5);
-    std::cout<<"退出"<<std::endl;
 
     Collector::Instance().Stop();
     Processor::Instance().Stop();
@@ -31,8 +41,6 @@ int main() {
 
     Processor::Instance().UInit();
     Collector::Instance().UInit();
-
-    delete queue;
 
     return 0;
 }

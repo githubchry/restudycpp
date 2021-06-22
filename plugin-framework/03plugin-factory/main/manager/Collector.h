@@ -1,12 +1,12 @@
 #pragma once
 
-#include "PluginMod.h"
+#include "PluginModule.h"
 #include "singleton.h"
 
-class Collector : public PluginMod {
+class Collector : public PluginModule {
 SINGLETON_STACK_CTOR(Collector);
 public:
     bool Init() {
-        return PluginMod::Init("Collector", "Instance");
+        return PluginModule::Init("Collector", "Instance");
     }
 };

@@ -15,7 +15,7 @@ public:
 
     T PluginLoad(const char *pLibPath, const char *pInstanceName);
 
-    void PluginModLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass);
+    void PluginModuleLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass);
 
 private:
     std::vector<void *> m_vHandle;
@@ -63,7 +63,7 @@ T PluginLoader<F, T>::PluginLoad(const char *pLibPath, const char *pInstanceName
 
 // 加载一个模块（插件目录），仅管理动态库的生命周期
 template<class F, class T>
-void PluginLoader<F, T>::PluginModLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass) {
+void PluginLoader<F, T>::PluginModuleLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass) {
 
     DIR *dir = opendir(pModPath);
     if (!dir) {

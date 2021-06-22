@@ -29,6 +29,6 @@ bool PrintProcessor::UInit() {
 }
 
 int PrintProcessor::ProcessData(ProtocolDataVar *pData) {
-    std::cout <<"PrintProcessor: " <<pData << std::endl;
-    return PluginImpl::ProcessData(pData);
+    log_debug("PrintProcessor:%p\n", pData);
+    return 0;
 }

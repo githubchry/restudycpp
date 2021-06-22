@@ -26,8 +26,12 @@ bool TimeCollector::Start() {
                     .getTime = (uint64_t) time(nullptr),
             };
 
-            std::cout << "生成时间" << pData << std::endl;
-            pQueue_->push(pData);
+            log_debug("生成时间:%p\n", pData);
+
+            if (false == pQueue_->push(pData)){
+                log_error("添加时间到队列失败:%p\n", pData);
+                ReleaseData(pData);
+            }
         }
 
         // 线程已经退出
@@ -59,11 +63,11 @@ bool TimeCollector::UInit() {
 
 
 int TimeCollector::ReleaseData(ProtocolDataVar *pData) {
-    std::cout << "释放时间" << pData << std::endl;
+    log_debug("释放时间:%p\n", pData);
     delete pData;
     return 0;
 }
 
-void TimeCollector::SetDataQueue(std::queue<ProtocolDataVar *> *pQueue) {
+void TimeCollector::SetDataQueue(Queue<ProtocolDataVar *> *pQueue) {
     pQueue_ = pQueue;
 }
