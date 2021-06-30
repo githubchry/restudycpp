@@ -14,12 +14,24 @@ set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wl,-gc-sections")
 #而在链接阶段， -Wl,–gc-sections 指示链接器去掉不用的section（其中-Wl, 表示后面的参数 -gc-sections 传递给链接器），这样就能减少最终的可执行程序的大小了。
 ########################
 
+
+########################
+#-fPIC 作用于编译阶段，告诉编译器产生与位置无关代码(Position-Independent Code)，则产生的代码中，没有绝对地址，全部使用相对地址，
+#故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
+#[gcc编译参数-fPIC的一些问题](http://blog.sina.com.cn/s/blog_54f82cc201011op1.html)
+#要求仅对共享库指定，如果对可执行文件指定可能会影响性能
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+########################
+
+
+########################
 # -g -fsanitize=address开启内存泄漏检测功能，用-fno-omit-frame-pointer编译，以得到更容易理解stack trace。
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
-#SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
+########################
 
 ########################################################################################################################
-
 
 if (WIN32)
     message("编译 windows")
@@ -33,6 +45,8 @@ else () #elseif (DEFINED ENV{WSLENV})
 
 endif ()
 
+########################################################################################################################
+
 
 add_subdirectory(plugin-framework/02plugin-queue)
 add_subdirectory(plugin-framework/03plugin-factory)
@@ -40,7 +54,8 @@ add_subdirectory(plugin-framework/03plugin-factory)
 add_subdirectory(explicit-implicit)
 add_subdirectory(factory-mode)
 add_subdirectory(malloc-class-init)
-add_subdirectory(smart-pointer)
+add_subdirectory(smart-pointer) # 智能指针
+add_subdirectory(value-move) # 右值与移动
 
 
 add_subdirectory(regex)
@@ -50,4 +65,3 @@ add_subdirectory(thread-future)
 add_subdirectory(numeric)
 add_subdirectory(container)
 add_subdirectory(variable-args)
-
