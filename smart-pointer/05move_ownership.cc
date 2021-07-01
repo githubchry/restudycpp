@@ -135,7 +135,7 @@ int main() {
    * SmartPtr<Circle> 无法自动转为 SmartPtr<Shape>
    * 这个行为显然还是不够“自然”
    */
-  // SmartPtr<Circle> ptr7(new Circle());
+  SmartPtr<Circle> ptr7(new Circle());
   // SmartPtr<Shape> ptr8{std::move(ptr7)};  // 编译错误
 
   return 0;
