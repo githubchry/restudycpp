@@ -72,6 +72,12 @@ std::move(ptr)的作用是把一个左值引用强制转换成一个右值引用
 在 Python 里，一切类型都是引用类型。
 **/
 
+
+#include <utility>
+#include <iostream>
+
+using namespace std;
+
 /**
  * @brief 演示`右值可以绑定到常左值引用的参数，但不可以绑定到非常左值引用`
  * @param a 常左值引用
@@ -101,6 +107,10 @@ int main() {
 
     int *var_ref = &variable;
     const int *const_ref = &variable;
+
+    int aaa = move(10+1);
+
+    cout<<aaa<<endl;
 
     return 0;
 }
