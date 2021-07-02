@@ -61,17 +61,20 @@ int main(){
 
 
     std::cout << "右值引用延长生命周期：" << std::endl;
-    Result &&ret = process_shape(Circle(), Triangle());
-    std::cout << "可以看到此时Result还没有被释放" << std::endl;
-    std::cout << ret.val << std::endl;
+    {
+        Result &&result = process_shape(Circle(), Triangle());
+        std::cout << "可以看到此时Result还没有被释放" << std::endl;
+        std::cout << result.val << std::endl;
+    }
+    std::cout << "生命周期结束" << std::endl;
 
 
     std::cout << "生命期延长规则只对 prvalue 有效，而对 xvalue 无效：" << std::endl;
-    Result &&result = std::move(process_shape(Circle(), Triangle()));
-    std::cout << "注意看，此时result指向的Result已经被析构了，后面对result解引用是未定义行为。" << std::endl;
-    std::cout << "由于 result 指向的是栈空间，通常不会立即导致程序崩溃，而会在某些复杂的组合条件下才会引致问题……" << std::endl;
-
-    //std::cout << result.val << std::endl;   // 可能崩溃
-
-    std::cout << "程序结束，离开会再一次调用Result的析构，在真正的项目就只能碰运气了，呵呵" << std::endl;
+    {
+        Result &&result = std::move(process_shape(Circle(), Triangle()));
+        std::cout << "注意看，此时result指向的Result已经被析构了，后面对result解引用是未定义行为。" << std::endl;
+        std::cout << "由于 result 指向的是栈空间，项目上通常不会立即导致程序崩溃，而会在某些复杂的组合条件下才会引致问题……" << std::endl;
+        std::cout << result.val << std::endl;   // 可能崩溃
+    }
+    std::cout << "生命周期结束" << std::endl;
 }
