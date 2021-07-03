@@ -63,13 +63,19 @@ void bar_move(const Shape &&s) {
 
 template<typename T>
 void bar_ex(T &&s) {
-    cout << "bar_ex(T&&)" << endl;
+    /**
+     * 在 T 是模板参数时，T&& 的作用主要是保持值类别进行转发，它有个名字就叫“转发引用”（forwarding reference）。
+     * 因为既可以是左值引用，也可以是右值引用，它也曾经被叫做“万能引用”（universal reference）。
+     *
+     * A& && => T=A&, T是一个左值引用 => T &&推导结果必须是左值引用 => 引用坍塌 => A&
+     * A && => T=A, T是一个实际类型 => 推导为右值引用 => A &&
+     */
 
-    // A& && => T=A&, T是一个左值引用 => T &&推导结果必须是左值引用 => 引用坍塌 => A&
-    // A && => T=A, T是一个实际类型 => 推导为右值引用 => A &&
+    cout << "bar_ex(T&&)" << endl;
 
     // std::forward利用`引用坍缩`机制来实现`完美转发` => 左值的仍然是左值，右值的仍然是右值。
     foo(std::forward<T>(s));
+
 }
 
 int main() {
@@ -105,7 +111,7 @@ int main() {
 
     cout << "==================================================" << endl;
     // 可如果两个 bar 的重载除了调用 foo 的方式不一样，其他都差不多的话，我们为什么要提供两个不同的 bar 呢？
-    // 在bar_ex利用引用`坍塌机制`实现`完美转发`
+    // 在bar_ex使用forward利用`引用坍塌机制`实现`完美转发`
     {
         cout << "Shape => nrvo => Shape && =>bar_ex(Shape &&) => 模板参数Shape：右值 => forward完美转发 => foo(T &&)" << endl;
         bar_ex(Shape());
@@ -113,8 +119,6 @@ int main() {
 
     cout << "==================================================" << endl;
     {
-        // 因为在 T 是模板参数时，T&& 的作用主要是保持值类别进行转发，它有个名字就叫“转发引用”（forwarding reference）。
-        // 因为既可以是左值引用，也可以是右值引用，它也曾经被叫做“万能引用”（universal reference）。
         cout << "Shape => Shape & => bar_ex(Shape& &&) => 模板参数Shape&：左值"
                 " => Shape& && 坍缩成 Shape& => forward完美转发 => foo(T&)" << endl;
         Shape temp;
