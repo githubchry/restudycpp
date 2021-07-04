@@ -9,4 +9,7 @@ add_executable(02vector 02vector.cc)
 add_executable(03deque 03deque.cc)
 add_executable(04list 04list.cc)
 add_executable(05forward_list 05forward_list.cc)
+add_executable(06queue 06queue.cc)
+add_executable(07stack 07stack.cc)
+
 add_executable(map main.cc)
