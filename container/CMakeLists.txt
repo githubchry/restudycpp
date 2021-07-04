@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(container)
 
+# output_container.h的主要用途是打印容器内容，里面使用了c++17特性
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
 add_executable(01string 01string.cc)
 add_executable(02vector 02vector.cc)
 add_executable(03deque 03deque.cc)
+add_executable(04list 04list.cc)
+add_executable(05forward_list 05forward_list.cc)
 add_executable(map main.cc)

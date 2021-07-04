@@ -38,6 +38,11 @@ vector 适合在尾部操作，这是它的内存布局决定的。只有在尾�
 因此，对于拷贝代价较高的自定义元素类型，我们应当定义移动构造函数，并标其为 noexcept，或只在容器中放置对象的智能指针。
 这就是为什么我之前需要在 smart_ptr 的实现中标上 noexcept 的原因。
 
+类似于string::c_str()，vector::data() 在特殊情况下直接读取或者操作底层数组，比如和已有的库API交互。如果一个库函数是这样：
+    void Foo(const int* arr, int len);
+
+但你有一个vector<int> a，你就只能Foo(a.data(), a.size())
+
 
 C++11 开始提供的 emplace… 系列函数是为了提升容器的性能而设计的。
 你可以试试把vec.emplace_back() 改成 vec.push_back(Obj1())。对于 vector 里的内容，结果是一样的；
