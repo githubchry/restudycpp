@@ -3,4 +3,5 @@ project(container)
 
 add_executable(01string 01string.cc)
 add_executable(02vector 02vector.cc)
+add_executable(03deque 03deque.cc)
 add_executable(map main.cc)
