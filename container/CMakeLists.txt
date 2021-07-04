@@ -11,5 +11,6 @@ add_executable(04list 04list.cc)
 add_executable(05forward_list 05forward_list.cc)
 add_executable(06queue 06queue.cc)
 add_executable(07stack 07stack.cc)
+add_executable(08func_obj 08func_obj.cc)
 
 add_executable(map main.cc)
