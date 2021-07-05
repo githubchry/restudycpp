@@ -56,12 +56,13 @@ add_subdirectory(factory-mode)
 add_subdirectory(malloc-class-init)
 add_subdirectory(smart-pointer) # 智能指针
 add_subdirectory(value-move) # 右值与移动
+add_subdirectory(exception) # 抛出异常
 
 
 add_subdirectory(regex)
 
-add_subdirectory(lazy-evaluation)
+add_subdirectory(lazy-evaluation) # 惰性求值
 add_subdirectory(thread-future)
 add_subdirectory(numeric)
-add_subdirectory(container)
+add_subdirectory(container) # 容器汇编
 add_subdirectory(variable-args)
