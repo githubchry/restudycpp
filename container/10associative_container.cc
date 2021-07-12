@@ -47,7 +47,7 @@ set 和 multiset 只能用来存放键，而 map 和 multimap 则存放一个个
 #include <set>          // std::set
 #include <tuple>        // std::tie
 #include <iostream>     // std::cout/endl
-#include "output_container.h"   // 打印 pair<int, int>
+#include "output_container.h"
 
 using namespace std;
 

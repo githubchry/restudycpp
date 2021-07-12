@@ -27,8 +27,8 @@ set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wl,-gc-sections")
 
 ########################
 # -g -fsanitize=address开启内存泄漏检测功能，用-fno-omit-frame-pointer编译，以得到更容易理解stack trace。
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -rdynamic -fsanitize=address -fno-omit-frame-pointer")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -rdynamic -fsanitize=address -fno-omit-frame-pointer")
 ########################
 
 ########################################################################################################################

@@ -21,8 +21,8 @@ protected:
 
     // Exit
     // 原子操作
-    std::atomic_bool _quit = {false};       // 退出状态 不可插入不可
-    std::atomic_bool _finished = {false};
+    std::atomic_bool _quit = {false};       // 退出状态 不可push，不可pop
+    std::atomic_bool _finished = {false};   // 结束状态：不可push，可pop
 
 public:
     Queue(const size_t size_max) : _size_max(size_max) {}
@@ -65,6 +65,7 @@ public:
     }
 
     // The queue has finished accepting input
+    // 队列已完成接受输入的工作
     void finished() {
         _finished = true;
         _empty.notify_all();

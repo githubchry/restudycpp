@@ -25,6 +25,11 @@ bool DataWorker::Start() {
         }
     });
 
+#ifdef __linux__
+    // 查看线程占用情况：top -Hp 进程PID -d1
+    pthread_setname_np(thread_->native_handle(), "DataWorker");
+#endif
+
     return true;
 }
 
@@ -33,7 +38,9 @@ bool DataWorker::Stop() {
     if (run_flag_) {
         run_flag_ = false;
         pQueue_->finished();
-        thread_->join();
+        if(thread_->joinable()){
+            thread_->join();
+        }
 
         ProtocolDataVar *pData;
         while (pQueue_->pop(pData)) {

@@ -54,6 +54,11 @@ bool GpsCollector::Start() {
 
     });
 
+#ifdef __linux__
+    // 查看线程占用情况：top -Hp 进程PID -d1
+    pthread_setname_np(thread_->native_handle(), Name());
+#endif
+
     return true;
 }
 
@@ -61,7 +66,9 @@ bool GpsCollector::Stop() {
 
     if (run_flag_) {
         run_flag_ = false;
-        thread_->join();
+        if(thread_->joinable()){
+            thread_->join();
+        }
     }
 
     return true;

@@ -1,7 +1,7 @@
 #include <map>
 #include <array>    // std::array
 #include <iostream> // std::cout/endl
-#include "output_container.h"   // 打印 pair<int, int>
+#include "output_container.h"
 
 using namespace std;
 

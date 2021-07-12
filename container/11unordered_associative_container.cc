@@ -30,7 +30,7 @@
 #include <functional>       // std::less/greater/hash
 #include <tuple>            // std::tie
 #include <iostream>         // std::cout/endl
-#include "output_container.h"   // 打印 pair<int, int>
+#include "output_container.h"
 
 using namespace std;
 
