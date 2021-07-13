@@ -2,9 +2,9 @@
 #include <iostream>
 #include "TimeCollector.h"
 
-
+#ifndef INLINE
 extern "C" void *Instance() { return new TimeCollector; }
-
+#endif
 
 const char *TimeCollector::Name() {
     return "TimeCollector";

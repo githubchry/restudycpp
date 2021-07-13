@@ -5,6 +5,7 @@
 #include <dlfcn.h> // dlopen, dlerror, dlsym, dlclose
 #include <dirent.h> // opendir, readdir
 #include <iostream>
+#include <vector>
 
 template<class F, class T>
 class PluginLoader {
@@ -13,9 +14,10 @@ public:
 
     ~PluginLoader();
 
-    T PluginLoad(const char *pLibPath, const char *pInstanceName);
-
     void PluginModuleLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass);
+
+private:
+    T PluginLoad(const char *pLibPath, const char *pInstanceName);
 
 private:
     std::vector<void *> m_vHandle;
@@ -57,11 +59,10 @@ T PluginLoader<F, T>::PluginLoad(const char *pLibPath, const char *pInstanceName
         return NULL;
     }
 
-
     return ptr_;
 }
 
-// 加载一个模块（插件目录），仅管理动态库的生命周期
+// 加载一个模块（插件目录），仅管理动态库的生命周期，插件实例的声明周期由调用者管理
 template<class F, class T>
 void PluginLoader<F, T>::PluginModuleLoad(const char *pModPath, const char *pInstanceName, std::vector<T> &vClass) {
 
@@ -70,17 +71,20 @@ void PluginLoader<F, T>::PluginModuleLoad(const char *pModPath, const char *pIns
         std::cout << "无法打开目录：" << pModPath << std::endl;
         return;
     }
-    dirent *p = nullptr;
+
+    // 遍历目录下文件（加载*.so）
+    dirent *p;
     while ((p = readdir(dir)) != nullptr) {
-        if (p->d_name[0] != '.') {
-            std::string libPath = pModPath + std::string("/") + p->d_name;
-            //加载库
-            T cls = PluginLoad(libPath.c_str(), pInstanceName);
-            if (cls) {
-                vClass.push_back(cls);
-            } else {
-                std::cout << "无法获取实例：" << pModPath << std::endl;
-            }
+        // 跳过当前目录`.`和上一级目录`..`
+        if (p->d_name[0] == '.') continue;
+
+        // 加载动态库文件
+        std::string libPath = pModPath + std::string("/") + p->d_name;
+        T cls = PluginLoad(libPath.c_str(), pInstanceName);
+        if (cls) {
+            vClass.push_back(cls);
+        } else {
+            std::cout << "无法获取实例：" << pModPath << std::endl;
         }
     }
     closedir(dir);

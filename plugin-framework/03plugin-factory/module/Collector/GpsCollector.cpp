@@ -4,7 +4,9 @@
 #include <iostream>
 
 
+#ifndef INLINE
 extern "C" void *Instance() { return new GpsCollector; }
+#endif
 
 
 const char *GpsCollector::Name() {

@@ -2,17 +2,15 @@
 
 #pragma once
 
-#include "PluginImpl.h"
+
+#ifdef INLINE
+#include "PluginInliner.h"
+#else
 #include "PluginLoader.h"
-#include <string>
+#endif
+#include "PluginImpl.h"
 
 class PluginModule {
-private:
-
-    PluginLoader<GetPluginInterface, PluginImpl *> m_libs;
-    std::vector<PluginImpl *> m_vClasses;//端口采集对象集合
-
-    Queue<ProtocolDataVar *> *pQueue_ = nullptr;//采集数据缓冲区
 public:
     PluginModule(/* args */) = default;
 
@@ -28,22 +26,30 @@ public:
     // 释放各模块
     bool UInit();
 
-
-    // 设置基本信息到模块下的各插件
-    void SetDataQueue(Queue<ProtocolDataVar *> *pQueue);   //队列
-    // void SetMemPool(IMemoryPool *pMemPool);  // 内存池
-
-
     // 启动模块
     bool Start();
 
     // 停止模块
     bool Stop();
 
-    // 释放数据
-    int ReleaseData(ProtocolDataVar *pData);
+    // void SetMemPool(IMemoryPool *pMemPool);  // 内存池
+
+    void SetDataQueue(Queue<ProtocolDataVar *> *pQueue);   //队列
 
     // 处理数据
     int ProcessData(ProtocolDataVar *pData);
+
+    // 释放数据
+    int ReleaseData(ProtocolDataVar *pData);
+
+private:
+
+#ifdef INLINE
+    PluginInliner<GetPluginInterface, PluginImpl *> m_libs;
+#else
+    PluginLoader<GetPluginInterface, PluginImpl *> m_libs;
+#endif
+    std::vector<PluginImpl *> m_vClasses;       //端口采集对象集合
+    Queue<ProtocolDataVar *> *pQueue_ = nullptr;//采集数据缓冲区
 };
 

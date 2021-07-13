@@ -11,10 +11,30 @@ bool PluginModule::Init(const char *pModuleName, const char *pInterfaceName) {
     return false;
 }
 
+bool PluginModule::UInit() {
+
+    // 反初始化插件依赖信息
+    for (auto iter : m_vClasses) {
+        delete iter;
+    }
+
+    return false;
+}
+
 bool PluginModule::Start() {
     // 初始化插件依赖信息
     for (auto iter : m_vClasses) {
         iter->Start();
+    }
+
+    return false;
+}
+
+
+bool PluginModule::Stop() {
+    // 初始化插件依赖信息
+    for (auto iter : m_vClasses) {
+        iter->Stop();
     }
 
     return false;
@@ -32,25 +52,6 @@ int PluginModule::ProcessData(ProtocolDataVar *pData) {
     }
 
     return 0;
-}
-
-bool PluginModule::UInit() {
-
-    // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        delete iter;
-    }
-
-    return false;
-}
-
-bool PluginModule::Stop() {
-    // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        iter->Stop();
-    }
-
-    return false;
 }
 
 int PluginModule::ReleaseData(ProtocolDataVar *pData) {

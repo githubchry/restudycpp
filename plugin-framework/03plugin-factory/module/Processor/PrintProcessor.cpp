@@ -5,7 +5,9 @@
 #include <iostream>
 #include "PrintProcessor.h"
 
+#ifndef INLINE
 extern "C" void *Instance() { return new PrintProcessor; }
+#endif
 
 
 const char *PrintProcessor::Name() {

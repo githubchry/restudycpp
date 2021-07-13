@@ -14,7 +14,6 @@ set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wl,-gc-sections")
 ########################
 
 
-
 ########################
 #-fPIC 作用于编译阶段，告诉编译器产生与位置无关代码(Position-Independent Code)，则产生的代码中，没有绝对地址，全部使用相对地址，
 #故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
@@ -25,28 +24,50 @@ set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wl,-gc-sections")
 ########################
 
 
-
 ########################
+# 内存泄漏检查工具 asan     cmake .. -DCMAKE_BUILD_TYPE=Debug
 # -g -fsanitize=address开启内存泄漏检测功能，用-fno-omit-frame-pointer编译，以得到更容易理解stack trace。
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
-SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+# 有些工具链的asan库可能会依赖： -ldl -lpthread -lrt
 ########################
 
 
-
 ########################
-# 覆盖率检查工具 gcov
+# 覆盖率检查工具 gcov      cmake .. -DCMAKE_BUILD_TYPE=Debug
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
 ########################
 
 
-
 ########################################################################################################################
 include_directories(/mnt/d/codes/new-root/wsl/include)
 link_directories("/mnt/d/codes/new-root/wsl/lib")
 
-add_subdirectory(main)
-add_subdirectory(module)
+# 增加编译选项：内联插件编译
+# cmake .. -DINLINE=ON
+option(INLINE "内联插件编译" OFF)
+
+if (INLINE MATCHES ON)
+    add_definitions(-DINLINE)
+
+    include_directories(impl)
+    include_directories(main/manager)
+    include_directories(main/worker)
+    include_directories(module)
+
+    aux_source_directory(main/manager SOURCE_MANAGER_FILES)
+    aux_source_directory(main/worker SOURCE_WORKER_FILES)
+    aux_source_directory(module/Collector SOURCE_COLLECTOR_FILES)
+    aux_source_directory(module/Processor SOURCE_PROCESSOR_FILES)
+
+    add_executable(plugin-factory main/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES} ${SOURCE_COLLECTOR_FILES} ${SOURCE_PROCESSOR_FILES})
+    target_link_libraries(plugin-factory PRIVATE pthread dl zlog)
+
+else ()
+    add_subdirectory(main)
+    add_subdirectory(module)
+endif ()
+
 

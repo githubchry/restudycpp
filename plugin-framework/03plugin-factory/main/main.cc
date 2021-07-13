@@ -11,6 +11,12 @@ int main() {
     scoped_zlog zlog_init("zlog.conf", "my_cat");
 #endif
 
+#ifdef INLINE
+    log_debug("内联模式\n");
+#else
+    log_debug("插件模式\n");
+#endif
+
     log_debug("debug\n");
     log_info("info\n");
     log_notice("notice\n");
