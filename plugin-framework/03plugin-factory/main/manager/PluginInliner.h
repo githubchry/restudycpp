@@ -10,9 +10,9 @@
 // 因为通过dlopen so动态库的方式很难调试（不支持gprof/backtrace），所以增加了内联调试模式
 // 开发环境可以使用内联模式调试问题，稳定后在再使用插件模式进行测试和生产
 
-#include "Collector/GpsCollector.h"
-#include "Collector/TimeCollector.h"
-#include "Processor/PrintProcessor.h"
+#include "gps/GpsCollector.h"
+#include "time/TimeCollector.h"
+#include "print/PrintProcessor.h"
 
 template<class F, class T>
 class PluginInliner {

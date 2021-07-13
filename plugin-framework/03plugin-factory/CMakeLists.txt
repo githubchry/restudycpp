@@ -19,8 +19,8 @@ set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wl,-gc-sections")
 #故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
 #[gcc编译参数-fPIC的一些问题](http://blog.sina.com.cn/s/blog_54f82cc201011op1.html)
 #要求仅对共享库指定，如果对可执行文件指定可能会影响性能
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ########################
 
 
@@ -43,7 +43,8 @@ SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs
 
 ########################################################################################################################
 include_directories(/mnt/d/codes/new-root/wsl/include)
-link_directories("/mnt/d/codes/new-root/wsl/lib")
+link_directories(/mnt/d/codes/new-root/wsl/lib)
+link_directories(/mnt/d/codes/new-root/lib)
 
 # 增加编译选项：内联插件编译
 # cmake .. -DINLINE=ON
@@ -55,19 +56,29 @@ if (INLINE MATCHES ON)
     include_directories(impl)
     include_directories(main/manager)
     include_directories(main/worker)
-    include_directories(module)
+    include_directories(plugin)
 
     aux_source_directory(main/manager SOURCE_MANAGER_FILES)
     aux_source_directory(main/worker SOURCE_WORKER_FILES)
-    aux_source_directory(module/Collector SOURCE_COLLECTOR_FILES)
-    aux_source_directory(module/Processor SOURCE_PROCESSOR_FILES)
 
-    add_executable(plugin-factory main/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES} ${SOURCE_COLLECTOR_FILES} ${SOURCE_PROCESSOR_FILES})
-    target_link_libraries(plugin-factory PRIVATE pthread dl zlog)
+    # 逐个增加插件源码 内联到主进程
+    file(GLOB plugin RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plugin/*)
+
+    foreach (sub ${plugin})
+        # 每个目录代表一个插件
+        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${sub})
+            aux_source_directory(${sub} SOURCE_FILES)
+            list(APPEND SOURCE_PLUGIN_FILES ${SOURCE_FILES})
+            message("${sub}")
+        endif ()
+    endforeach ()
+
+    add_executable(factory main/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES} ${SOURCE_PLUGIN_FILES})
+    target_link_libraries(factory PRIVATE pthread dl zlog)
 
 else ()
     add_subdirectory(main)
-    add_subdirectory(module)
+    add_subdirectory(plugin)
 endif ()
 
 

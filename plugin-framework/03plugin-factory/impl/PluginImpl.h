@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include "LoggerImpl.h"
+#include "logger.h"
 #include "Queue.h"
 
 // 推荐protobuf 取代ProtocolDataVar结构体，使用oneof作为数据段
