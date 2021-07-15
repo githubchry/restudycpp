@@ -8,12 +8,12 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <execinfo.h>   // backtrace
+#include <fstream>
 
 // 定义保存栈帧的最大深度 根据项目复杂度定
-#define STACK_FRAME_BUFFER_SIZE (int)32
+#define STACK_FRAME_BUFFER_SIZE (int)128
 
-void dump(void)
-{
+void dump_backtrace() {
     // 定义栈帧缓冲区
     void *stack_frame_buffer[STACK_FRAME_BUFFER_SIZE];
 
@@ -22,15 +22,13 @@ void dump(void)
 
     // 将栈帧信息转化为字符串
     char **stack_frame_string_buffer = backtrace_symbols(stack_frame_buffer, stack_frames_size);
-    if (stack_frame_string_buffer == NULL)
-    {
+    if (stack_frame_string_buffer == NULL) {
         perror("backtrace_symbols");
         exit(-1);
     }
 
     // 遍历打印栈帧信息
-    for (int i = 0; i < stack_frames_size; i++)
-    {
+    for (int i = 0; i < stack_frames_size; i++) {
         log_fatal("[%02d] %s\n", i, stack_frame_string_buffer[i]);
     }
 
@@ -38,20 +36,32 @@ void dump(void)
     free(stack_frame_string_buffer);
 }
 
-void signal_handler(int signo)
-{
+void dump_maps() {
+    // std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps";
+    std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps | grep r-xp";
+
+    FILE *stream = popen(cmd.c_str(), "r");
+    assert_param(stream);
+
+    ssize_t read;
+    char *line = nullptr;
+    size_t len = 0;
+
+    while ((read = getline(&line, &len, stream)) != -1) {
+        log_fatal("%s", line);
+    }
+
+    pclose(stream);
+}
+
+void signal_handler(int signo) {
     log_fatal("\n=================>>>catch signal %d<<<=====================\n", signo);
-    log_fatal("Dump stack start...\n");
-    dump();
-    log_fatal("Dump stack end...\n");
-    std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps";
-    // std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps | grep r-xp";
-    system(cmd.c_str());
-    log_debug("pid: %d\n",getpid());
+    dump_backtrace();
+    dump_maps();
 
 #ifdef ENABLE_LOG
-    ~zlog_sync();
-    sync
+    zlog_fini();
+    system("sync");
 #endif
 
     // 恢复信号默认处理(SIG_DFL)并重新发送信号(raise)

@@ -57,27 +57,27 @@ public:
 #define TIME_STR        "[%04d-%02d-%02d %02d:%02d:%02d]"
 #define filename(x) strrchr(x,'/')?strrchr(x,'/')+1:x
 
-#define log_debug(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_debug(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_LIGHT_GREEN " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
-#define log_info(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_info(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_LIGHT_GRAY " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
-#define log_notice(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_notice(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_LIGHT_CYAN " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
-#define log_warn(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_warn(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_YELLOW " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
-#define log_error(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_error(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_LIGHT_RED " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
-#define log_fatal(str, args...)     do {struct timeval tm_tmp; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
+#define log_fatal(str, args...)     do {struct timeval tm_tmp = { 0 }; struct tm *ptm = NULL; gettimeofday(&tm_tmp, NULL); ptm = gmtime(&tm_tmp.tv_sec); \
     printf(COLOR_STR_DARK_GRAY " " TIME_STR " %s:%03d, %s> " COLOR_STR_NONE " " str, \
     ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, filename(__FILE__), __LINE__, __FUNCTION__, ## args); } while (0)
 
