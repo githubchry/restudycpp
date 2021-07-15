@@ -44,6 +44,15 @@ void signal_handler(int signo)
     log_fatal("Dump stack start...\n");
     dump();
     log_fatal("Dump stack end...\n");
+    std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps";
+    // std::string cmd = "cat /proc/" + std::to_string(getpid()) + "/maps | grep r-xp";
+    system(cmd.c_str());
+    log_debug("pid: %d\n",getpid());
+
+#ifdef ENABLE_LOG
+    ~zlog_sync();
+    sync
+#endif
 
     // 恢复信号默认处理(SIG_DFL)并重新发送信号(raise)
     signal(signo, SIG_DFL);
