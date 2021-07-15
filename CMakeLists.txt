@@ -56,22 +56,29 @@ endif ()
 
 ########################################################################################################################
 
+file(GLOB directorys RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
+
+foreach (directory ${directorys})
+    if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${directory})
+        if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/CMakeLists.txt)
+            message("${directory}")
+            add_subdirectory(${directory})
+        endif ()
+    endif ()
+endforeach ()
+
 
 add_subdirectory(plugin-framework/02plugin-queue)
 add_subdirectory(plugin-framework/03plugin-factory)
-
-add_subdirectory(explicit-implicit)
-add_subdirectory(factory-mode)
-add_subdirectory(malloc-class-init)
-add_subdirectory(smart-pointer) # 智能指针
-add_subdirectory(value-move) # 右值与移动
-add_subdirectory(exception) # 抛出异常
-
-
-add_subdirectory(regex)
-
-add_subdirectory(lazy-evaluation) # 惰性求值
-add_subdirectory(thread-future)
-add_subdirectory(numeric)
-add_subdirectory(container) # 容器汇编
-add_subdirectory(variable-args)
+#add_subdirectory(explicit-implicit)
+#add_subdirectory(factory-mode)
+#add_subdirectory(malloc-class-init)
+#add_subdirectory(smart-pointer) # 智能指针
+#add_subdirectory(value-move) # 右值与移动
+#add_subdirectory(exception) # 抛出异常
+#add_subdirectory(regex)
+#add_subdirectory(lazy-evaluation) # 惰性求值
+#add_subdirectory(thread-future)
+#add_subdirectory(numeric)
+#add_subdirectory(container) # 容器汇编
+#add_subdirectory(variable-args)

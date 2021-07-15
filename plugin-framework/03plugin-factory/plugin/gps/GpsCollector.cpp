@@ -3,8 +3,7 @@
 
 #include <iostream>
 
-
-#ifndef INLINE
+#ifdef DYNAMIC_LOAD_MODE
 extern "C" void *Instance() { return new GpsCollector; }
 #endif
 
@@ -12,7 +11,6 @@ extern "C" void *Instance() { return new GpsCollector; }
 const char *GpsCollector::Name() {
     return "GpsCollector";
 }
-
 
 bool GpsCollector::Start() {
     run_flag_ = true;

@@ -15,18 +15,18 @@
 #include "print/PrintProcessor.h"
 
 template<class F, class T>
-class PluginInliner {
+class PluginLinker {
 public:
-    PluginInliner() = default;
+    PluginLinker() = default;
 
-    ~PluginInliner() = default;
+    ~PluginLinker() = default;
 
     void PluginModuleLoad(const char *pModuleName, const char *pInstanceName, std::vector<T> &vClass);
 };
 
 // 内联插件模块并返回，插件实例的声明周期由调用者管理
 template<class F, class T>
-void PluginInliner<F, T>::PluginModuleLoad(const char *pModuleName, const char *pInstanceName, std::vector<T> &vClass) {
+void PluginLinker<F, T>::PluginModuleLoad(const char *pModuleName, const char *pInstanceName, std::vector<T> &vClass) {
     // 这里 new 出来 push 到 vClass，后面调用者 Unint 时会执行 delete
     if (0 == strcmp(pModuleName, "Collector")){
         vClass.push_back(new GpsCollector);

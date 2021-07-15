@@ -5,7 +5,7 @@
 #include <iostream>
 #include "PrintProcessor.h"
 
-#ifndef INLINE
+#ifdef DYNAMIC_LOAD_MODE
 extern "C" void *Instance() { return new PrintProcessor; }
 #endif
 
@@ -31,6 +31,15 @@ bool PrintProcessor::UInit() {
 }
 
 int PrintProcessor::ProcessData(ProtocolDataVar *pData) {
-    log_debug("PrintProcessor:%p\n", pData);
+    static int a = 0;
+
+    a++;
+    log_debug("PrintProcessor:%p, %d\n", pData, a);
+
+    if (a >= 5) {
+        // 模拟段错误信号
+        int *pTmp = NULL;
+        *pTmp = 1;	//对未分配内存空间的指针进行赋值，模拟访问非法内存段错误
+    }
     return 0;
 }

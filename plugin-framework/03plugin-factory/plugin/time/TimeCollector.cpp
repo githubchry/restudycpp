@@ -2,9 +2,10 @@
 #include <iostream>
 #include "TimeCollector.h"
 
-#ifndef INLINE
+#ifdef DYNAMIC_LOAD_MODE
 extern "C" void *Instance() { return new TimeCollector; }
 #endif
+
 
 const char *TimeCollector::Name() {
     return "TimeCollector";

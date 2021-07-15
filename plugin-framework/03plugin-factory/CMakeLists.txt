@@ -27,17 +27,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ########################
 # 内存泄漏检查工具 asan     cmake .. -DCMAKE_BUILD_TYPE=Debug
 # -g -fsanitize=address开启内存泄漏检测功能，用-fno-omit-frame-pointer编译，以得到更容易理解stack trace。
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
-SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
 # 有些工具链的asan库可能会依赖： -ldl -lpthread -lrt
 ########################
 
 
 ########################
 # 覆盖率检查工具 gcov      cmake .. -DCMAKE_BUILD_TYPE=Debug
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
-SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
-SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
 ########################
 
 
@@ -46,39 +46,34 @@ include_directories(/mnt/d/codes/new-root/wsl/include)
 link_directories(/mnt/d/codes/new-root/wsl/lib)
 link_directories(/mnt/d/codes/new-root/lib)
 
-# 增加编译选项：内联插件编译
-# cmake .. -DINLINE=ON
-option(INLINE "内联插件编译" OFF)
+# 增加编译选项：默认动态加载模式 可选静态链接模式
+# cmake .. -DSTATIC_LINK_MODE=ON
+option(STATIC_LINK_MODE "static link mode" OFF)
+add_definitions(-DDYNAMIC_LOAD_MODE)  # 定义宏让代码判断当前模式：动态加载模式
+message("plugin-factory static link mode: ${STATIC_LINK_MODE}")
 
-if (INLINE MATCHES ON)
-    add_definitions(-DINLINE)
 
-    include_directories(impl)
-    include_directories(main/manager)
-    include_directories(main/worker)
-    include_directories(plugin)
+if (STATIC_LINK_MODE MATCHES ON)
+remove_definitions(-DDYNAMIC_LOAD_MODE)
+include_directories(plugin)
+endif ()
 
-    aux_source_directory(main/manager SOURCE_MANAGER_FILES)
-    aux_source_directory(main/worker SOURCE_WORKER_FILES)
+include_directories(impl)   # 公用头文件
+add_subdirectory(plugin)    # 插件源码目录
 
-    # 逐个增加插件源码 内联到主进程
-    file(GLOB plugin RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plugin/*)
+# 主进程
+include_directories(factory/manager)
+include_directories(factory/worker)
 
-    foreach (sub ${plugin})
-        # 每个目录代表一个插件
-        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${sub})
-            aux_source_directory(${sub} SOURCE_FILES)
-            list(APPEND SOURCE_PLUGIN_FILES ${SOURCE_FILES})
-            message("${sub}")
-        endif ()
-    endforeach ()
+aux_source_directory(factory/manager SOURCE_MANAGER_FILES)
+aux_source_directory(factory/worker SOURCE_WORKER_FILES)
 
-    add_executable(factory main/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES} ${SOURCE_PLUGIN_FILES})
-    target_link_libraries(factory PRIVATE pthread dl zlog)
+add_executable(main factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
 
+if (STATIC_LINK_MODE MATCHES OFF)
+    target_link_libraries(main PRIVATE pthread dl zlog)
 else ()
-    add_subdirectory(main)
-    add_subdirectory(plugin)
+    target_link_libraries(main PRIVATE pthread dl zlog TimeCollector PrintProcessor GpsCollector -rdynamic)
 endif ()
 
 

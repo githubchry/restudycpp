@@ -3,11 +3,13 @@
 #pragma once
 
 
-#ifdef INLINE
-#include "PluginInliner.h"
-#else
+#ifdef DYNAMIC_LOAD_MODE
 #include "PluginLoader.h"
+#else
+#include "PluginLinker.h"
 #endif
+
+
 #include "PluginImpl.h"
 
 class PluginModule {
@@ -44,10 +46,10 @@ public:
 
 private:
 
-#ifdef INLINE
-    PluginInliner<GetPluginInterface, PluginImpl *> m_libs;
-#else
+#ifdef DYNAMIC_LOAD_MODE
     PluginLoader<GetPluginInterface, PluginImpl *> m_libs;
+#else
+    PluginLinker<GetPluginInterface, PluginImpl *> m_libs;
 #endif
     std::vector<PluginImpl *> m_vClasses;       //端口采集对象集合
     Queue<ProtocolDataVar *> *pQueue_ = nullptr;//采集数据缓冲区
