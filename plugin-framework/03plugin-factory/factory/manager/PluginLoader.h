@@ -27,8 +27,8 @@ private:
 template<class F, class T>
 PluginLoader<F, T>::~PluginLoader() {
 
-    for (auto iter : m_vHandle) {
-        dlclose(iter);
+    for (auto handle_ : m_vHandle) {
+        dlclose(handle_);
     }
 }
 

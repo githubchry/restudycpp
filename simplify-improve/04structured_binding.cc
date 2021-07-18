@@ -7,6 +7,8 @@ using namespace std;
 // g++ 增加编译参数 => -std=c++17
 // cmake 指定为 C++17 版本 => set(CMAKE_CXX_STANDARD 17)
 
+// [C++17的结构化绑定（解构）](https://zh.cppreference.com/w/cpp/language/structured_binding)
+
 int main() {
 
     // 在讲关联容器的时候, container/10associative_container.cc 有过这样一个例子：
@@ -39,8 +41,8 @@ int main() {
     }
 
     // 效果等同于：
-    for (const auto& it : mmp) {
-        cout << it.first << "-" << it.second << endl;
+    for (const auto& item : mmp) {
+        cout << item.first << "-" << item.second << endl;
     }
 
     return 0;

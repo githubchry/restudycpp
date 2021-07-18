@@ -4,8 +4,8 @@ bool PluginModule::Init(const char *pModuleName, const char *pInterfaceName) {
 
     m_libs.PluginModuleLoad(pModuleName, pInterfaceName, m_vClasses);
     // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        iter->SetDataQueue(pQueue_);
+    for (auto plug : m_vClasses) {
+        plug->SetDataQueue(pQueue_);
     }
 
     return false;
@@ -14,8 +14,8 @@ bool PluginModule::Init(const char *pModuleName, const char *pInterfaceName) {
 bool PluginModule::UInit() {
 
     // 反初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        delete iter;
+    for (auto plug : m_vClasses) {
+        delete plug;
     }
 
     return false;
@@ -23,8 +23,8 @@ bool PluginModule::UInit() {
 
 bool PluginModule::Start() {
     // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        iter->Start();
+    for (auto plug : m_vClasses) {
+        plug->Start();
     }
 
     return false;
@@ -33,8 +33,8 @@ bool PluginModule::Start() {
 
 bool PluginModule::Stop() {
     // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        iter->Stop();
+    for (auto plug : m_vClasses) {
+        plug->Stop();
     }
 
     return false;
@@ -47,8 +47,8 @@ void PluginModule::SetDataQueue(Queue<ProtocolDataVar *> *pQueue) {
 int PluginModule::ProcessData(ProtocolDataVar *pData) {
 
     // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
-        iter->ProcessData(pData);
+    for (auto plug : m_vClasses) {
+        plug->ProcessData(pData);
     }
 
     return 0;
@@ -57,10 +57,10 @@ int PluginModule::ProcessData(ProtocolDataVar *pData) {
 int PluginModule::ReleaseData(ProtocolDataVar *pData) {
 
     // 初始化插件依赖信息
-    for (auto iter : m_vClasses) {
+    for (auto plug : m_vClasses) {
         //必须检测这个是不是插件生成的数据 避免重复释放导致崩溃
-        if (pData->source == iter->Name()) {
-            iter->ReleaseData(pData);
+        if (pData->source == plug->Name()) {
+            plug->ReleaseData(pData);
             break;
         }
     }

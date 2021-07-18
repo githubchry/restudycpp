@@ -5,6 +5,21 @@
 // g++ 增加编译参数 => -std=c++17
 // cmake 指定为 C++17 版本 => set(CMAKE_CXX_STANDARD 17)
 
+// [模板实参推导](https://zh.cppreference.com/w/cpp/language/template_argument_deduction)
+
+// 这种自动推导机制，可以是编译器根据构造函数来自动生成：
+template<typename T>
+struct AutoObj {
+    AutoObj(T value) {};
+};
+
+// 也可以是手工提供一个推导向导，达到自己需要的效果：
+template<typename T>
+struct ManualObj {
+    ManualObj(T value) {};
+};
+
+ManualObj(const char *) -> ManualObj<std::string>;
 
 
 int main() {
@@ -26,24 +41,11 @@ int main() {
     // 这个问题在 C++17 里也是基本不存在的。虽然不能只提供一个模板参数，但你可以两个参数全都不写 🤣：
     std::array a{1, 2, 3};
 
+    // ========================================================================
+
+    AutoObj autoObj1{std::string("hello")}; // 得到 AutoObj<string>
+    AutoObj autoObj2{"hello"};                 // 得到 AutoObj<const char*>
+
+    ManualObj manualObj{"hello"};              // 得到 AutoObj<string>
     return 0;
 }
-
-// 这种自动推导机制，可以是编译器根据构造函数来自动生成：
-template<typename T>
-struct AutoObj {
-    AutoObj(T value) {};
-};
-
-AutoObj autoObj1{std::string("hello")}; // 得到 AutoObj<string>
-AutoObj autoObj2{"hello"};                 // 得到 AutoObj<const char*>
-
-// 也可以是手工提供一个推导向导，达到自己需要的效果：
-template<typename T>
-struct ManualObj {
-    ManualObj(T value) {};
-};
-
-ManualObj(const char *) -> ManualObj<std::string>;
-ManualObj manualObj{"hello"};              // 得到 AutoObj<string>
-
