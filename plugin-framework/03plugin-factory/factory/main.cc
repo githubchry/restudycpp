@@ -69,7 +69,9 @@ void signal_handler(int signo) {
 
 int main() {
     // 捕获段错误信号SIGSEGV
-    signal(SIGSEGV, signal_handler);
+    signal(SIGABRT, signal_handler);    // double-free abort 堆越界 assert
+    signal(SIGSEGV, signal_handler);    // 非法内存访问错误
+    signal(SIGBUS, signal_handler);     // 未对齐的数据访问
 
 #ifdef ENABLE_LOG
     /* TODO:
