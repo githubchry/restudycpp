@@ -3,8 +3,8 @@ project(plugin-factory)
 
 ########################
 # 打开所有编译告警
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 ########################
 
 
@@ -34,33 +34,39 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl -rdynamic")
 ########################
 # 内存泄漏检查工具 asan     cmake .. -DCMAKE_BUILD_TYPE=Debug
 # -g -fsanitize=address开启内存泄漏检测功能，用-fno-omit-frame-pointer编译，以得到更容易理解stack trace。
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -fsanitize=address -fno-omit-frame-pointer -ldl -lpthread -lrt")
 # 有些工具链的asan库可能会依赖： -ldl -lpthread -lrt
 ########################
 
 
 ########################
 # 覆盖率检查工具 gcov      cmake .. -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+#set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
 ########################
 
 
 ########################
 # 性能测试工具 gprof     cmake .. -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -pg")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -pg")
 # 无法测试动态加载库(dlopen)内部的代码 所以要求在静态链接模式下进行
 ########################
 
 
 ########################################################################################################################
+# 增加编译选项：使能日志库
+# cmake .. -DENABLE_ZLOG=ON
+option(ENABLE_ZLOG "enable zlog" OFF)
+if (ENABLE_ZLOG MATCHES ON)
+    add_definitions(-DENABLE_LOG)
+endif ()
+
 # 增加编译选项：默认动态加载模式 可选静态链接模式
 # cmake .. -DSTATIC_LINK_MODE=ON
 option(STATIC_LINK_MODE "static link mode" OFF)
-
 add_definitions(-DDYNAMIC_LOAD_MODE)  # 定义宏让代码判断当前模式：动态加载模式
 if (STATIC_LINK_MODE MATCHES ON)
     message("plugin-factory static link mode: ${STATIC_LINK_MODE}")
@@ -85,11 +91,21 @@ include_directories(factory/worker)
 aux_source_directory(factory/manager SOURCE_MANAGER_FILES)
 aux_source_directory(factory/worker SOURCE_WORKER_FILES)
 
+# 编译生产版本
 add_executable(main factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
 target_link_libraries(main PRIVATE pthread dl zlog)
+
+# 编译调试版本：增加-g参数，输出到debug目录并重命名
+add_executable(main_debug factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
+set_target_properties(main_debug PROPERTIES COMPILE_FLAGS -g)
+set_target_properties(main_debug PROPERTIES RUNTIME_OUTPUT_DIRECTORY debug)
+set_target_properties(main_debug PROPERTIES OUTPUT_NAME main)
+target_link_libraries(main_debug PRIVATE pthread dl zlog)
+
 
 if (STATIC_LINK_MODE MATCHES ON)
     # 静态链接模式：将用到的插件逐个链接上去
     target_link_libraries(main PRIVATE TimeCollector PrintProcessor GpsCollector -rdynamic)
+    target_link_libraries(main_debug PRIVATE TimeCollector PrintProcessor GpsCollector -rdynamic)
 endif ()
 

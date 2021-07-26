@@ -8,7 +8,6 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <execinfo.h>   // backtrace
-#include <fstream>
 
 // 定义保存栈帧的最大深度 根据项目复杂度定
 #define STACK_FRAME_BUFFER_SIZE (int)128
@@ -143,6 +142,10 @@ int main() {
 
     //测试5秒后退出
     sleep(5);
+
+    // 模拟段错误信号 => SIGSEGV
+    int *pTmp = NULL;
+    *pTmp = 1;	//对未分配内存空间的指针进行赋值，模拟访问非法内存段错误
 
     Collector::Instance().Stop();
     Processor::Instance().Stop();

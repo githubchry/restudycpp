@@ -33,24 +33,25 @@ bool PrintProcessor::UInit() {
 
 int PrintProcessor::ProcessData(ProtocolDataVar *pData) {
     log_debug("PrintProcessor:%p\n", pData);
-
+    /*
     static int a = 0;
     if (++a >= 5) {
         // 模拟段错误信号 => SIGSEGV
-        //int *pTmp = NULL;
-        //*pTmp = 1;	//对未分配内存空间的指针进行赋值，模拟访问非法内存段错误
+        int *pTmp = NULL;
+        *pTmp = 1;	//对未分配内存空间的指针进行赋值，模拟访问非法内存段错误
 
-        // double-free => SIGABRT
-        void *pc = malloc(1024);
-        free(pc);
-        free(pc);
+        // double-free => SIGABRT   Release模式下居然没崩溃？
+        // void *pc = malloc(1024);
+        // free(pc);
+        // free(pc);
 
-        // 执行abort()函数 => SIGABRT
+        // 执行abort()函数 => SIGABRT 栈帧停止在后面的return 0;语句
         // abort();
 
-        // 断言 => SIGABRT
-        //void *tmp = NULL;
-        //assert( tmp != NULL );
+        // 断言 => SIGABRT 仅Debug模式下有效
+        // void *tmp = NULL;
+        // assert( tmp != NULL );
     }
+    //*/
     return 0;
 }
