@@ -1,27 +1,25 @@
 
 # 生产类插件
+set(output_name GpsCollector)
+set(plugin_type Collector)
+aux_source_directory(. source_files)
 
-if (STATIC_LINK_MODE MATCHES OFF)
-    add_library(GpsCollector SHARED GpsCollector.cpp)
-    target_link_libraries(GpsCollector PRIVATE -fPIC)
-else ()
-    add_library(GpsCollector STATIC GpsCollector.cpp)
-endif ()
+# 分别编译release和debug版本，仅存在-g参数区别
+set(build_types debug;release)
+foreach (build_type IN LISTS build_types)
+    if (STATIC_LINK_MODE MATCHES OFF)
+        add_library(${output_name}_${build_type} SHARED ${source_files})
+        target_link_libraries(${output_name}_${build_type} PRIVATE -fPIC)
+    else ()
+        add_library(${output_name}_${build_type} STATIC ${source_files})
+    endif ()
 
-# 指定库文件输出目录  默认当前CMakeLists.txt所在目录$CMAKE_SOURCE_DIR
-set_target_properties(GpsCollector PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../Collector)
+    set_target_properties(${output_name}_${build_type} PROPERTIES OUTPUT_NAME ${output_name})
+    if (${build_type} MATCHES release)
+        set_target_properties(${output_name}_${build_type} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../${plugin_type})
+    else ()
+        set_target_properties(${output_name}_${build_type} PROPERTIES COMPILE_FLAGS -g)
+        set_target_properties(${output_name}_${build_type} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../${build_type}/${plugin_type})
+    endif ()
+endforeach ()
 
-########################################################################################################################
-
-# 编译调试版本：增加-g参数，输出到debug目录并重命名
-if (STATIC_LINK_MODE MATCHES OFF)
-    add_library(GpsCollector_debug SHARED GpsCollector.cpp)
-    target_link_libraries(GpsCollector_debug PRIVATE -fPIC)
-else ()
-    add_library(GpsCollector_debug STATIC GpsCollector.cpp)
-endif ()
-
-# 指定库文件输出目录  默认当前CMakeLists.txt所在目录$CMAKE_SOURCE_DIR
-set_target_properties(GpsCollector_debug PROPERTIES COMPILE_FLAGS -g)
-set_target_properties(GpsCollector_debug PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../debug/Collector)
-set_target_properties(GpsCollector_debug PROPERTIES OUTPUT_NAME GpsCollector)

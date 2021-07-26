@@ -91,21 +91,25 @@ include_directories(factory/worker)
 aux_source_directory(factory/manager SOURCE_MANAGER_FILES)
 aux_source_directory(factory/worker SOURCE_WORKER_FILES)
 
-# 编译生产版本
-add_executable(main factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
-target_link_libraries(main PRIVATE pthread dl zlog)
+########################################################################################################################
 
-# 编译调试版本：增加-g参数，输出到debug目录并重命名
-add_executable(main_debug factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
-set_target_properties(main_debug PROPERTIES COMPILE_FLAGS -g)
-set_target_properties(main_debug PROPERTIES RUNTIME_OUTPUT_DIRECTORY debug)
-set_target_properties(main_debug PROPERTIES OUTPUT_NAME main)
-target_link_libraries(main_debug PRIVATE pthread dl zlog)
+set(output_name main)
+list(APPEND source_files factory/main.cc ${SOURCE_MANAGER_FILES} ${SOURCE_WORKER_FILES})
 
+# 分别编译release和debug版本，仅存在-g参数区别
+set(build_types debug;release)
+foreach (build_type IN LISTS build_types)
+    add_executable(${output_name}_${build_type} ${source_files})
 
-if (STATIC_LINK_MODE MATCHES ON)
-    # 静态链接模式：将用到的插件逐个链接上去
-    target_link_libraries(main PRIVATE TimeCollector PrintProcessor GpsCollector -rdynamic)
-    target_link_libraries(main_debug PRIVATE TimeCollector PrintProcessor GpsCollector -rdynamic)
-endif ()
+    set_target_properties(${output_name}_${build_type} PROPERTIES OUTPUT_NAME ${output_name})
+    if (${build_type} MATCHES debug)
+        set_target_properties(${output_name}_${build_type} PROPERTIES COMPILE_FLAGS -g)
+        set_target_properties(${output_name}_${build_type} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${build_type})
+    endif ()
 
+    target_link_libraries(${output_name}_${build_type} PRIVATE pthread dl zlog)
+    if (STATIC_LINK_MODE MATCHES ON)
+        # 静态链接模式：将用到的插件逐个链接上去
+        target_link_libraries(${output_name}_${build_type} PRIVATE TimeCollector PrintProcessor GpsCollector -rdynamic)
+    endif ()
+endforeach ()
