@@ -61,7 +61,7 @@
 
 
 
-## 03plugin-factory
+## [03plugin-factory](https://github.com/githubchry/plugin-factory)
 
 1. 对可能用到的插件进行分类， 比如采集类插件， 加工类插件……
 
