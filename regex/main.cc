@@ -36,5 +36,17 @@ int main() {
     // std::cout << version_str1 << std::endl;
     std::cout << version_str2 << std::endl;
 
+
+    // ==================================================
+
+    input = "/sys/1377203920857726976/1442fc60a3a7/passthrough/serial/ttyS3-RS2321";
+    express = "[\\S]+/passthrough/([\\S]+)/([\\S]+)";
+    ret = std::regex_match(input.begin(), input.end(), results, express);
+    if (!ret) {
+        std::cout << "解析失败:" << input << std::endl;
+    }
+    for (auto str : results) {
+        std::cout << str << std::endl;
+    }
     return 0; // 结果：.....
 }

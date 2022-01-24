@@ -53,6 +53,6 @@ int main() {
         q3.push(n);
 
     print_queue(q3);
-    cout<< int(8^1);
-    cout<< int(9^1);
+    cout << int(8 ^ 1) << endl; // => 9
+    cout << int(9 ^ 1) << endl; // => 8
 }

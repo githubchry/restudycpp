@@ -19,7 +19,7 @@ mutex output_lock;
  *      recursive_mutex：允许同一线程可以无阻塞地多次加锁
  *      timed_mutex：允许锁定超时的互斥量
  *      recursive_timed_mutex：允许锁定超时的递归互斥量
- *      shared_mutex：允许共享和独占两种获得方式的互斥量
+ *      shared_mutex(C++17)：允许共享和独占两种获得方式的互斥量 [读写锁shared_lock/shared_mutex]https://blog.csdn.net/princeteng/article/details/103952888
  *      shared_timed_mutex：允许共享和独占两种获得方式的、允许锁定超时的互斥量
  * */
 

@@ -27,7 +27,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointe
 # 在gcc中 -rdynamic 与 -Wl,-E 和 -Wl,--export-dynamic 的作用等价。
 # 使用场景：bin需要打印backtrace时(可看到更详细的符号信息);.so反向调用bin时(extern); => 总之就是针对bin
 # -ldl 链接选项针对dlopen, dlerror, dlsym, dlclose等动态库使用接口，使用-rdynamic的场景经常都会用到-ldl
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl -rdynamic")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl -rdynamic")
 ########################
 
 ########################################################################################################################
