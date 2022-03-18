@@ -70,4 +70,4 @@ add_subdirectory(plugin-framework/02plugin-queue)
 #add_subdirectory(thread-future)
 #add_subdirectory(numeric)
 #add_subdirectory(container) # 容器汇编
-#add_subdirectory(variable-args)
+#add_subdirectory(variable)
